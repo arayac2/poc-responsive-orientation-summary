@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Landscape & Portrait — POC summary for design</title>
+  <style>
+    :root {
+      --bg: #f7f6f3;
+      --surface: #ffffff;
+      --text: #1c1917;
+      --muted: #57534e;
+      --line: #e7e5e4;
+      --accent: #0f766e;
+      --warn-bg: #fff7ed;
+      --warn-line: #fdba74;
+      --info-bg: #f0fdfa;
+      --info-line: #5eead4;
+      --ok-bg: #f0fdf4;
+      --ok-line: #86efac;
+      --danger: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    h1 { font-size: 1.75rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    h2 { font-size: 1.2rem; margin: 0 0 10px; }
+    p { margin: 0 0 12px; color: var(--text); }
+    .muted { color: var(--muted); }
+    .lead { font-size: 1.05rem; color: var(--muted); margin-bottom: 24px; }
+    section { margin: 32px 0; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 16px 0 8px;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .stat strong {
+      display: block;
+      font-size: 1.35rem;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .stat span { font-size: 0.9rem; color: var(--muted); }
+    .stat.danger strong { color: var(--danger); }
+    .stat.warn strong { color: #c2410c; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+      margin: 12px 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { background: #fafaf9; color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+    tr:last-child td { border-bottom: none; }
+    .callout {
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 14px 0;
+      border: 1px solid;
+    }
+    .callout.warn { background: var(--warn-bg); border-color: var(--warn-line); }
+    .callout.info { background: var(--info-bg); border-color: var(--info-line); }
+    .callout.ok { background: var(--ok-bg); border-color: var(--ok-line); }
+    .callout strong { display: block; margin-bottom: 4px; }
+    hr { border: none; border-top: 1px solid var(--line); margin: 40px 0; }
+    a { color: var(--accent); }
+    footer { margin-top: 40px; font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Landscape &amp; Portrait — what we can use</h1>
+    <p class="lead">
+      Simple answer for design: the browser already knows if the screen is
+      wide (Landscape) or tall (Portrait). We can style differently for each.
+      Same idea as breakpoints, but by shape — not by pixel width.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><strong>Landscape</strong><span>Screen wider than tall</span></div>
+      <div class="stat"><strong>Portrait</strong><span>Screen taller than wide</span></div>
+    </div>
+
+    <section>
+      <h2>The solution</h2>
+      <p>Use the browser’s built-in <strong>orientation</strong> check:</p>
+      <table>
+        <thead>
+          <tr><th>Mode</th><th>When it applies</th><th>Typical devices</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Portrait</td><td>Height ≥ width</td><td>Phone upright, many tablets upright</td></tr>
+          <tr><td>Landscape</td><td>Width &gt; height</td><td>Phone sideways, most laptops / desktops</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">
+        This works together with today’s breakpoints (0 / 768 / 1024 / 1680).
+        Breakpoint = how wide. Orientation = tall vs wide shape.
+      </p>
+    </section>
+
+    <section>
+      <h2>Will it work for users?</h2>
+      <div class="stats">
+        <div class="stat"><strong>~97.6%</strong><span>Browsers support this</span></div>
+        <div class="stat"><strong>Yes</strong><span>Chrome, Edge, Firefox, Safari</span></div>
+        <div class="stat"><strong>Yes</strong><span>iOS &amp; Android phones / tablets</span></div>
+      </div>
+      <p class="muted">
+        Source:
+        <a href="https://caniuse.com/mdn-css_at-rules_media_orientation" target="_blank" rel="noopener">Can I Use — CSS orientation</a>.
+        Gaps are very old browsers we don’t target.
+      </p>
+      <div class="callout warn">
+        <strong>One thing designers should know</strong>
+        The browser looks at the <strong>visible area</strong>, not the phone’s tilt sensor.
+        Example: phone in portrait, but the on-screen keyboard opens and shortens the height —
+        styles may briefly switch to Landscape. Plan layouts that still look okay if that happens.
+      </div>
+    </section>
+
+    <section>
+      <h2>What this means for design specs</h2>
+      <table>
+        <thead>
+          <tr><th>You can specify</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Layout by orientation</td><td>Portrait: stacked cards · Landscape: side-by-side</td></tr>
+          <tr><td>Orientation + breakpoint</td><td>Tablet Landscape only: 2-column nav</td></tr>
+          <tr><td>Keep today’s width rules</td><td>Mobile / tablet / desktop breakpoints stay as they are</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">
+        <strong>Bottom line</strong>
+        Yes — Landscape and Portrait are a real, widely supported browser feature (~97.6%).
+        Safe to design for. Existing width breakpoints keep working; orientation is an extra axis when the layout needs it.
+      </div>
+    </section>
+
+    <hr />
+
+    <h1>Follow-up questions</h1>
+    <p class="lead">
+      Extra checks designers asked about: pointer, OS, and combining with Landscape / Portrait.
+    </p>
+    <div class="stats">
+      <div class="stat"><strong>~97.4%</strong><span>Pointer (finger vs mouse)</span></div>
+      <div class="stat"><strong>Yes</strong><span>Combine with breakpoints</span></div>
+      <div class="stat warn"><strong>Navigator API</strong><span>Only way to read OS / platform</span></div>
+    </div>
+
+    <section>
+      <h2>1. Use “pointer” when a width could be tablet or desktop?</h2>
+      <p>Yes — for that gray zone (e.g. around 1024px), don’t guess the device name. Ask how people point:</p>
+      <table>
+        <thead>
+          <tr><th>What we check</th><th>Usually means</th><th>Good for</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Finger-style pointer (coarse)</td>
+            <td>Touch-first (many tablets / phones)</td>
+            <td>Bigger tap targets, touch-friendly type/spacing</td>
+          </tr>
+          <tr>
+            <td>Precise pointer (fine)</td>
+            <td>Mouse / trackpad-first (many laptops / desktops)</td>
+            <td>Denser UI, hover actions, desktop typography</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout warn">
+        <strong>Don’t treat pointer as device name</strong>
+        A touch laptop can feel like a tablet. An iPad with a mouse can feel like a desktop.
+        Pointer = how they point, not “this is an iPad.” Still the best CSS tool for the tablet/desktop overlap.
+      </div>
+      <p class="muted">
+        Support ~97.4% —
+        <a href="https://caniuse.com/css-media-interaction" target="_blank" rel="noopener">Can I Use · pointer / hover</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Pointer + OS + breakpoint together for layout &amp; type tokens?</h2>
+      <table>
+        <thead>
+          <tr><th>Combo</th><th>Can we?</th><th>Recommendation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Breakpoint + Landscape/Portrait</td>
+            <td>Yes</td>
+            <td>Use for layout shape (stack vs side-by-side)</td>
+          </tr>
+          <tr>
+            <td>Breakpoint + pointer (and hover)</td>
+            <td>Yes</td>
+            <td>Use for density / type / touch vs mouse UI</td>
+          </tr>
+          <tr>
+            <td>Breakpoint + orientation + pointer</td>
+            <td>Yes</td>
+            <td>Best full combo when a screen needs all three</td>
+          </tr>
+          <tr>
+            <td>Anything + OS (Windows / Mac / Linux)</td>
+            <td>Only via Navigator API (JS)</td>
+            <td>Not CSS tokens — eng wires platform, then pairs with layout rules</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout info">
+        <strong>What to choose</strong>
+        Prefer <strong>width breakpoint + Landscape/Portrait + pointer</strong>.
+        Drop OS from the design system rules. OS doesn’t change layout the way size, shape, and input do.
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Can we detect OS for laptop / desktop?</h2>
+      <p>
+        <strong>Not with CSS.</strong> The only practical way to read platform / OS is JavaScript’s
+        <strong>Navigator API</strong> (e.g. <strong>userAgent</strong> / <strong>userAgentData</strong>) —
+        not a design-token media query.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Wish</th><th>Reality</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Know Windows vs Mac vs Linux</td>
+            <td>Possible only via Navigator API in code — not via CSS orientation/breakpoint tokens</td>
+          </tr>
+          <tr>
+            <td>Know laptop vs desktop</td>
+            <td>Navigator still won’t reliably say “laptop” vs “desktop tower” — only OS / browser hints</td>
+          </tr>
+          <tr>
+            <td>Use it for typography tokens in the DS</td>
+            <td>Possible but fragile (privacy limits, spoofing, incomplete data) — prefer pointer + breakpoint instead</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout warn">
+        <strong>For designers</strong>
+        If a spec truly needs OS (rare), engineering must use the Navigator API in app code.
+        Don’t expect Landscape/Portrait or breakpoints alone to name Windows / Mac.
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Pair each method with Landscape / Portrait — does it work?</h2>
+      <table>
+        <thead>
+          <tr><th>Method</th><th>+ Portrait / Landscape?</th><th>Notes for design</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Width breakpoint</td>
+            <td>Yes (CSS)</td>
+            <td>e.g. tablet Landscape → 2 columns; tablet Portrait → 1 column</td>
+          </tr>
+          <tr>
+            <td>Pointer (finger vs mouse)</td>
+            <td>Yes (CSS)</td>
+            <td>e.g. touch + Portrait → large type; mouse + Landscape → denser type</td>
+          </tr>
+          <tr>
+            <td>Hover capability</td>
+            <td>Yes (CSS)</td>
+            <td>Usually with pointer; don’t rely on hover-only actions for touch</td>
+          </tr>
+          <tr>
+            <td>OS / platform (Navigator API)</td>
+            <td>Yes, but only in app code</td>
+            <td>Read OS via Navigator, then combine with orientation (CSS or matchMedia). Not a pure token/CSS pair.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <strong>CSS-only:</strong> breakpoint + pointer + Landscape/Portrait can all be required together.
+      </p>
+      <p>
+        <strong>With Navigator API:</strong> engineering can detect platform (e.g. Mac vs Windows),
+        then apply layout/type when that platform <strong>and</strong> Portrait or Landscape match —
+        e.g. “Windows + Landscape → denser type.” That needs JavaScript glue; it won’t live as a plain CSS token rule.
+      </p>
+      <div class="callout info">
+        <strong>Practical pick</strong>
+        Default specs: breakpoint × orientation × pointer. Add Navigator platform only when product
+        truly needs OS-specific behavior — and expect eng to wire it, not the token sheet alone.
+      </div>
+    </section>
+
+    <div class="callout ok">
+      <strong>Bottom line for the follow-ups</strong>
+      Spec layouts and typography with <strong>breakpoint × orientation × pointer</strong>.
+      Need OS/platform? Only via the <strong>Navigator API</strong> in app code, then pair with
+      Landscape/Portrait there — not as a CSS-only token rule. Laptop vs desktop still isn’t a reliable label.
+    </div>
+
+    <footer>
+      POC summary for Chameleon / CML responsive orientation · hosted for designer sharing
+    </footer>
+  </main>
+</body>
+</html>
