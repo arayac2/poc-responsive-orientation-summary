@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POC Solution — Breakpoint × Orientation (CML code)</title>
+  <style>
+    :root {
+      --bg: #f4f4f5;
+      --surface: #fff;
+      --text: #18181b;
+      --muted: #52525b;
+      --line: #e4e4e7;
+      --accent: #1d4ed8;
+      --ok: #15803d;
+      --warn: #c2410c;
+      --bad: #b91c1c;
+      --code-bg: #f4f4f5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+    h1 { font-size: 1.7rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    h2 { font-size: 1.2rem; margin: 28px 0 10px; }
+    h3 { font-size: 1.02rem; margin: 18px 0 8px; }
+    p { margin: 0 0 12px; }
+    .muted { color: var(--muted); }
+    .lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 20px; }
+    a { color: var(--accent); }
+    .nav {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 20px; font-size: 0.9rem;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px; margin: 14px 0;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .stat strong { display: block; font-size: 1.15rem; margin-bottom: 2px; }
+    .stat span { font-size: 0.85rem; color: var(--muted); }
+    .stat.ok strong { color: var(--ok); }
+    .stat.warn strong { color: var(--warn); }
+    table {
+      width: 100%; border-collapse: collapse; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+      font-size: 0.92rem; margin: 12px 0;
+    }
+    th, td {
+      text-align: left; padding: 10px 12px;
+      border-bottom: 1px solid var(--line); vertical-align: top;
+    }
+    th { background: #fafafa; color: var(--muted); font-size: 0.82rem; }
+    tr:last-child td { border-bottom: none; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.84rem;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #18181b;
+      color: #f4f4f5;
+      padding: 14px 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.45;
+    }
+    .callout {
+      border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+      border: 1px solid; background: #fff;
+    }
+    .callout.ok { border-color: #86efac; background: #f0fdf4; }
+    .callout.warn { border-color: #fdba74; background: #fff7ed; }
+    .callout.info { border-color: #93c5fd; background: #eff6ff; }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .pill {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line);
+      margin-right: 6px; background: #fff; color: var(--muted);
+    }
+    .pill.rec { border-color: #86efac; color: var(--ok); background: #f0fdf4; }
+    .pill.avoid { border-color: #fca5a5; color: var(--bad); background: #fef2f2; }
+    ul.check { padding-left: 1.2rem; margin: 8px 0 0; }
+    ul.check li { margin: 4px 0; }
+    hr { border: none; border-top: 1px solid var(--line); margin: 36px 0; }
+    footer { margin-top: 36px; font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="nav">
+      <a href="./">Designer summary</a>
+      <span class="muted">·</span>
+      <span>Engineering solution (this page)</span>
+    </div>
+
+    <h1>Real solution — Breakpoint × Orientation in CML</h1>
+    <p class="lead">
+      Grounded in chameleon-design as it exists today: primitive size refs →
+      semantic breakpoints → grid maps → <code>@mixin respond</code>.
+      Goal: add Landscape / Portrait without breaking consumers.
+    </p>
+
+    <div class="stats">
+      <div class="stat ok"><strong>Recommend</strong><span>Extend mixin layer</span></div>
+      <div class="stat ok"><strong>0 break</strong><span>Keep token names</span></div>
+      <div class="stat"><strong>~97.6%</strong><span>CSS orientation support</span></div>
+      <div class="stat warn"><strong>Avoid</strong><span>Rename size tokens</span></div>
+    </div>
+
+    <h2>1. Current structure (from code)</h2>
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Where</th><th>What it does today</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Primitive width refs</td>
+          <td><code>_primitive-size.scss</code></td>
+          <td>
+            <code>$cml-ref-size-breakpoint-0/768/1024/1680</code>
+            → map to <code>$cml-base-size-*</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Semantic breakpoints</td>
+          <td><code>_semantic-breakpoint.scss</code></td>
+          <td>
+            <code>$cml-sys-breakpoint-standard-*</code>,
+            <code>landing-*</code>, <code>admin-*</code>
+          </td>
+        </tr>
+        <tr>
+          <td>Grid maps</td>
+          <td><code>_semantic-grid.scss</code></td>
+          <td>Each grid map holds a <code>breakpoint:</code> key (width only)</td>
+        </tr>
+        <tr>
+          <td>Consumer API</td>
+          <td><code>_media.scss</code></td>
+          <td>
+            <code>@mixin respond($device)</code> →
+            <code>@media (min-width: …)</code> only
+          </td>
+        </tr>
+        <tr>
+          <td>JS helper</td>
+          <td><code>utils/breakpoint.ts</code></td>
+          <td>
+            <code>matchMedia('(min-width: 1024px)')</code> — width only
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <strong>Important naming collision already in repo</strong>
+      Device frame tokens already use Portrait/Landscape in the name
+      (e.g. <code>$cml-ref-size-device-width-Ipad-Portrait</code>).
+      Those are <em>frame sizes</em>, not CSS <code>orientation</code> media.
+      Do <strong>not</strong> bake orientation into
+      <code>$cml-ref-size-breakpoint-*</code> names — easy to confuse with device frames.
+    </div>
+
+    <h2>2. Constraint of today’s responsive tokens</h2>
+    <ul class="check">
+      <li>Breakpoints are <strong>pixel widths</strong>, not layout axes.</li>
+      <li>Orientation is a <strong>media feature</strong> (<code>portrait</code> / <code>landscape</code>), not a size number — so it does not belong as a new “breakpoint size” value.</li>
+      <li>~250+ call sites use <code>@include respond(...)</code>; renaming tokens forces wide churn.</li>
+      <li>TS desktop watchers also assume width-only.</li>
+    </ul>
+
+    <h2>3. Options we can actually do</h2>
+
+    <h3>
+      <span class="pill rec">Recommended</span>
+      A. Keep width tokens · extend the mixin (query layer)
+    </h3>
+    <p>
+      Orientation becomes an <strong>optional second axis on the mixin</strong>,
+      not a new size token. Old tokens and <code>respond($device)</code> stay valid.
+    </p>
+<pre>// _media.scss — additive, non-breaking
+@mixin respond($device, $orientation: null) {
+  $bp: map.get($breakpoints, $device);
+
+  @if $bp == null and $orientation == null {
+    @content;
+  } @else if $bp == null {
+    @media (orientation: #{$orientation}) { @content; }
+  } @else if $orientation == null {
+    @media (min-width: $bp) { @content; }
+  } @else {
+    @media (min-width: $bp) and (orientation: #{$orientation}) {
+      @content;
+    }
+  }
+}</pre>
+    <table>
+      <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Zero rename · matches how CSS works · small diff · optional opt-in</td>
+          <td>Orientation isn’t a “token name” in the sheet (it’s a query arg)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>
+      <span class="pill">Optional add-on</span>
+      B. Tiny orientation keyword constants (not size breakpoints)
+    </h3>
+    <p>
+      If designers/devs want named constants (not new widths):
+    </p>
+<pre>// e.g. _semantic-orientation.scss (new)
+$cml-sys-orientation-portrait: portrait;
+$cml-sys-orientation-landscape: landscape;</pre>
+    <p class="muted">
+      Use with the mixin: <code>@include respond(tablet, $cml-sys-orientation-landscape)</code>.
+      Still no change to <code>$cml-ref-size-breakpoint-*</code>.
+    </p>
+
+    <h3>
+      <span class="pill avoid">Avoid</span>
+      C. Rename / fork width tokens per orientation
+    </h3>
+<pre>// ❌ Do not do this as the primary API
+$cml-ref-size-breakpoint-768-landscape: ...;
+$cml-ref-size-breakpoint-768-portrait: ...;</pre>
+    <p class="muted">
+      Ambiguous vs device-frame tokens, forces consumer migration or a large alias matrix,
+      and orientation is not a width value anyway.
+    </p>
+
+    <h2>4. Naming convention (fits CML today)</h2>
+    <table>
+      <thead><tr><th>Kind</th><th>Pattern</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Width (unchanged)</td>
+          <td><code>$cml-ref-size-breakpoint-&#123;px&#125;</code></td>
+          <td><code>$cml-ref-size-breakpoint-768</code></td>
+        </tr>
+        <tr>
+          <td>Semantic width (unchanged)</td>
+          <td><code>$cml-sys-breakpoint-&#123;context&#125;-&#123;step&#125;</code></td>
+          <td><code>$cml-sys-breakpoint-standard-md</code></td>
+        </tr>
+        <tr>
+          <td>Orientation keywords (new, optional)</td>
+          <td><code>$cml-sys-orientation-&#123;portrait|landscape&#125;</code></td>
+          <td><code>$cml-sys-orientation-landscape</code></td>
+        </tr>
+        <tr>
+          <td>Query API</td>
+          <td><code>respond($device, $orientation?)</code></td>
+          <td><code>respond(desktop, landscape)</code></td>
+        </tr>
+        <tr>
+          <td>Device frames (existing — leave alone)</td>
+          <td><code>$cml-ref-size-device-*-Ipad-Portrait</code></td>
+          <td>Frame mock sizes, not media orientation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. Token structure recommendation</h2>
+    <pre>base size
+  └─ ref size breakpoint (width only)     ← keep public names
+       └─ sys breakpoint / grid maps      ← keep
+            └─ respond($device, $orientation?)   ← NEW axis here
+                 └─ CSS: (min-width) and optional (orientation)</pre>
+    <p>
+      <strong>Default:</strong> omit orientation → today’s behavior.<br />
+      <strong>Specific:</strong> pass <code>portrait</code> / <code>landscape</code> when the layout needs it.
+    </p>
+
+    <h2>6. Backward compatibility</h2>
+    <table>
+      <thead><tr><th>Surface</th><th>Change?</th><th>How</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>$cml-ref-size-breakpoint-*</code></td>
+          <td>No</td>
+          <td>Leave as-is; no alias needed</td>
+        </tr>
+        <tr>
+          <td><code>$cml-sys-breakpoint-*</code></td>
+          <td>No</td>
+          <td>Leave as-is</td>
+        </tr>
+        <tr>
+          <td><code>@include respond(tablet)</code></td>
+          <td>No</td>
+          <td>Second arg defaults to <code>null</code></td>
+        </tr>
+        <tr>
+          <td>New call sites</td>
+          <td>Opt-in</td>
+          <td><code>@include respond(tablet, landscape) { ... }</code></td>
+        </tr>
+        <tr>
+          <td><code>breakpoint.ts</code></td>
+          <td>Additive</td>
+          <td>Optional helper with <code>and (orientation: …)</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout ok">
+      <strong>Consumer projects</strong>
+      No forced code change. Existing SCSS keeps compiling. Teams adopt orientation
+      only where design specs ask for it.
+    </div>
+
+    <h2>7. POC implementation sketch (files to touch)</h2>
+    <table>
+      <thead><tr><th>File</th><th>POC change</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>src/scss/functions/_media.scss</code></td>
+          <td>Add optional <code>$orientation</code> to <code>respond</code></td>
+        </tr>
+        <tr>
+          <td><code>semantic/_semantic-orientation.scss</code> (new, optional)</td>
+          <td>Export portrait/landscape keyword constants</td>
+        </tr>
+        <tr>
+          <td>One sample component SCSS</td>
+          <td>Prove width-only + width×orientation both work</td>
+        </tr>
+        <tr>
+          <td><code>utils/breakpoint.ts</code> (optional follow-up)</td>
+          <td>
+            e.g. <code>matchMedia('(min-width: 1024px) and (orientation: landscape)')</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>8. Developer usage examples</h2>
+<pre>// Today — still valid (no orientation)
+@include respond(tablet) {
+  .card { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+// Orientation only (any width)
+@include respond(mobile, portrait) {
+  .hero { flex-direction: column; }
+}
+
+// Breakpoint + orientation
+@include respond(tablet, landscape) {
+  .nav { display: flex; flex-direction: row; }
+}
+
+@include respond(desktop, portrait) {
+  .sidebar { display: none; }
+}</pre>
+
+<pre>// Compiled CSS shape
+@media (min-width: 768px) and (orientation: landscape) { ... }</pre>
+
+    <h2>9. Breakpoint × orientation — does it work together?</h2>
+    <p>
+      Yes. CSS media queries combine with <code>and</code>. The mixin above emits exactly that.
+      Width tokens stay the source of <code>min-width</code>; orientation is a separate condition.
+    </p>
+
+    <h2>10. Pros / cons / recommendation</h2>
+    <table>
+      <thead><tr><th>Solution</th><th>Compat</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>A. Extend <code>respond</code> (+ optional orientation constants)</td>
+          <td>Full</td>
+          <td><strong>Ship this</strong></td>
+        </tr>
+        <tr>
+          <td>B. Parallel size tokens per orientation</td>
+          <td>Alias-heavy</td>
+          <td>Skip as primary API</td>
+        </tr>
+        <tr>
+          <td>C. Rename tokens to include orientation</td>
+          <td>Breaking</td>
+          <td>Reject</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout info">
+      <strong>Recommendation</strong>
+      Treat orientation as a <strong>query layer</strong> on top of existing width breakpoints.
+      Keep <code>$cml-ref-size-breakpoint-*</code> forever as public width tokens.
+      Extend <code>respond($device, $orientation: null)</code>. Optionally add
+      <code>$cml-sys-orientation-*</code> keywords. Mirror in TS helpers later if components need JS.
+    </div>
+
+    <h2>11. Acceptance criteria status</h2>
+    <table>
+      <thead><tr><th>Criterion</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Analyze limits of current responsive token structure</td><td>Done (this page)</td></tr>
+        <tr><td>Study Landscape/Portrait without touching old breakpoints</td><td>Done — mixin axis</td></tr>
+        <tr><td>Propose naming for orientation-based tokens</td><td>Done — <code>$cml-sys-orientation-*</code> + mixin args</td></tr>
+        <tr><td>Propose structure for breakpoint + orientation</td><td>Done — width tokens + query layer</td></tr>
+        <tr><td>Backward-compat path for old token names</td><td>Done — no rename required</td></tr>
+        <tr><td>Implement POC in repo &amp; test real call sites</td><td><strong>Next step</strong> (code change in chameleon-design)</td></tr>
+        <tr><td>Test breakpoint × orientation together</td><td>Next step (with POC)</td></tr>
+        <tr><td>Assess consumer project impact</td><td>Done — additive only</td></tr>
+        <tr><td>Pros/cons + recommendation</td><td>Done</td></tr>
+        <tr><td>Developer usage examples</td><td>Done</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout ok">
+      <strong>Next engineering step</strong>
+      Patch <code>_media.scss</code>, add a tiny fixture/demo SCSS (or one component story),
+      confirm width-only call sites unchanged and orientation queries emit correctly.
+    </div>
+
+    <footer>
+      Based on chameleon-design token + media files ·
+      companion to <a href="./">designer Landscape/Portrait summary</a>
+    </footer>
+  </main>
+</body>
+</html>
