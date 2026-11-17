@@ -3,21 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Our recommended solution — Landscape & Portrait</title>
+  <title>POC Solution — Breakpoint × Orientation (CML code)</title>
   <style>
     :root {
-      --bg: #f7f6f3;
-      --surface: #ffffff;
-      --text: #1c1917;
-      --muted: #57534e;
-      --line: #e7e5e4;
-      --accent: #0f766e;
-      --ok-bg: #f0fdf4;
-      --ok-line: #86efac;
-      --warn-bg: #fff7ed;
-      --warn-line: #fdba74;
-      --info-bg: #f0fdfa;
-      --info-line: #5eead4;
+      --bg: #f4f4f5;
+      --surface: #fff;
+      --text: #18181b;
+      --muted: #52525b;
+      --line: #e4e4e7;
+      --accent: #1d4ed8;
+      --ok: #15803d;
+      --warn: #c2410c;
+      --bad: #b91c1c;
     }
     * { box-sizing: border-box; }
     body {
@@ -25,297 +22,402 @@
       font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.55;
     }
-    main { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
-    h1 { font-size: 1.7rem; margin: 0 0 10px; letter-spacing: -0.02em; }
-    h2 { font-size: 1.2rem; margin: 32px 0 10px; }
+    .banner {
+      background: #fff7ed;
+      border-bottom: 1px solid #fdba74;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      color: #9a3412;
+      text-align: center;
+    }
+    main { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+    h1 { font-size: 1.7rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    h2 { font-size: 1.2rem; margin: 28px 0 10px; }
+    h3 { font-size: 1.02rem; margin: 18px 0 8px; }
     p { margin: 0 0 12px; }
     .muted { color: var(--muted); }
-    .lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 22px; }
+    .lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 20px; }
     a { color: var(--accent); }
-    .nav { font-size: 0.9rem; margin-bottom: 22px; }
     .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      margin: 16px 0 8px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px; margin: 14px 0;
     }
     .stat {
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 10px;
-      padding: 14px 16px;
+      padding: 12px 14px;
     }
-    .stat strong {
-      display: block;
-      font-size: 1.2rem;
-      color: var(--accent);
-      margin-bottom: 4px;
-    }
-    .stat span { font-size: 0.9rem; color: var(--muted); }
+    .stat strong { display: block; font-size: 1.1rem; margin-bottom: 2px; }
+    .stat span { font-size: 0.85rem; color: var(--muted); }
+    .stat.ok strong { color: var(--ok); }
+    .stat.warn strong { color: var(--warn); }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      overflow: hidden;
-      font-size: 0.95rem;
-      margin: 12px 0;
+      width: 100%; border-collapse: collapse; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+      font-size: 0.92rem; margin: 12px 0;
     }
     th, td {
-      text-align: left;
-      padding: 11px 12px;
-      border-bottom: 1px solid var(--line);
-      vertical-align: top;
+      text-align: left; padding: 10px 12px;
+      border-bottom: 1px solid var(--line); vertical-align: top;
     }
-    th { background: #fafaf9; color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+    th { background: #fafafa; color: var(--muted); font-size: 0.82rem; }
     tr:last-child td { border-bottom: none; }
-    .callout {
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin: 14px 0;
-      border: 1px solid;
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.84rem;
     }
-    .callout strong { display: block; margin-bottom: 4px; }
-    .callout.ok { background: var(--ok-bg); border-color: var(--ok-line); }
-    .callout.warn { background: var(--warn-bg); border-color: var(--warn-line); }
-    .callout.info { background: var(--info-bg); border-color: var(--info-line); }
-    .example {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 10px;
+    code {
+      background: #f4f4f5;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #18181b;
+      color: #f4f4f5;
       padding: 14px 16px;
+      border-radius: 10px;
+      overflow-x: auto;
       margin: 12px 0;
+      line-height: 1.45;
     }
-    .example .label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
+    .callout {
+      border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+      border: 1px solid; background: #fff;
     }
-    ul { padding-left: 1.2rem; margin: 8px 0 12px; }
-    li { margin: 6px 0; }
-    hr { border: none; border-top: 1px solid var(--line); margin: 36px 0; }
-    footer { margin-top: 40px; font-size: 0.85rem; color: var(--muted); }
+    .callout.ok { border-color: #86efac; background: #f0fdf4; }
+    .callout.warn { border-color: #fdba74; background: #fff7ed; }
+    .callout.info { border-color: #93c5fd; background: #eff6ff; }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .pill {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line);
+      margin-right: 6px; background: #fff; color: var(--muted);
+    }
+    .pill.rec { border-color: #86efac; color: var(--ok); background: #f0fdf4; }
+    .pill.avoid { border-color: #fca5a5; color: var(--bad); background: #fef2f2; }
+    ul.check { padding-left: 1.2rem; margin: 8px 0 0; }
+    ul.check li { margin: 4px 0; }
+    footer { margin-top: 36px; font-size: 0.85rem; color: var(--muted); }
   </style>
 </head>
 <body>
   <main>
-    <p class="nav">
-      <a href="./">← Designer overview</a>
+    <p class="muted" style="margin:0 0 16px;font-size:0.9rem">
+      <a href="./">Designer summary</a>
+      <span> · </span>
+      <span>Engineering solution (this page)</span>
     </p>
-
-    <h1>Our recommended solution</h1>
+    <h1>Real solution — Breakpoint × Orientation in CML</h1>
     <p class="lead">
-      How we can support <strong>Landscape</strong> and <strong>Portrait</strong>
-      in our design system — without breaking anything teams already use.
+      Based on how chameleon-design works today. We want Landscape / Portrait
+      support, without forcing anyone to rewrite existing screens.
     </p>
 
     <div class="stats">
-      <div class="stat"><strong>Keep width rules</strong><span>Same as today</span></div>
-      <div class="stat"><strong>Add shape rules</strong><span>Tall vs wide screen</span></div>
-      <div class="stat"><strong>No forced rewrite</strong><span>Old names still work</span></div>
+      <div class="stat ok"><strong>Recommend</strong><span>Extend the existing helper</span></div>
+      <div class="stat ok"><strong>No rename</strong><span>Old token names stay</span></div>
+      <div class="stat"><strong>~97.6%</strong><span>Browsers support orientation</span></div>
+      <div class="stat warn"><strong>Avoid</strong><span>New width tokens per orientation</span></div>
     </div>
-
-    <div class="callout ok">
-      <strong>In one sentence</strong>
-      Keep today’s “how wide is the screen?” rules as they are, and add an
-      optional “is it tall or wide?” check on top — only when a design needs it.
-    </div>
-
-    <h2>How things work today</h2>
-    <p>
-      Right now our system mainly asks one question:
-      <strong>How wide is the screen?</strong>
-      (mobile → tablet → desktop → large desktop)
-    </p>
-    <p class="muted">
-      That is useful — but two screens can be the same width and still feel
-      different if one is upright (Portrait) and the other is sideways (Landscape).
-    </p>
-
-    <h2>What we want to add</h2>
-    <p>A second question, used only when needed:</p>
-    <table>
-      <thead>
-        <tr><th>Question</th><th>Answers</th><th>Used for</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>How wide?</td>
-          <td>Current breakpoints (unchanged)</td>
-          <td>Most layout steps we already have</td>
-        </tr>
-        <tr>
-          <td>Tall or wide shape?</td>
-          <td>Portrait / Landscape</td>
-          <td>Extra layout or type choices when design asks</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="example">
-      <div class="label">Simple picture</div>
-      <p style="margin:0">
-        <strong>Width</strong> = which “size shelf” we’re on<br />
-        <strong>Orientation</strong> = whether the shelf is standing up or lying on its side
-      </p>
-    </div>
-
-    <h2>The solution we recommend</h2>
-    <p>
-      <strong>Do not rename</strong> the existing breakpoint names teams already
-      depend on. Instead, add Landscape / Portrait as an <strong>optional extra filter</strong>
-      when applying styles.
-    </p>
-    <table>
-      <thead>
-        <tr><th>Approach</th><th>What it means</th><th>Our take</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Optional filter on top of current breakpoints</td>
-          <td>Same width rules + optional Portrait/Landscape</td>
-          <td><strong>Yes — recommended</strong></td>
-        </tr>
-        <tr>
-          <td>Create brand-new names for every width × orientation</td>
-          <td>Lots of new labels; easy to confuse; big migration</td>
-          <td>No — too heavy</td>
-        </tr>
-        <tr>
-          <td>Replace old names with orientation-based names</td>
-          <td>Forces every consumer to change</td>
-          <td>No — breaking</td>
-        </tr>
-      </tbody>
-    </table>
 
     <div class="callout info">
-      <strong>Why this fits our system</strong>
-      Our current “breakpoint” names are really <em>widths</em>.
-      Landscape / Portrait is a different kind of fact about the screen.
-      Mixing both into one long name would make the system harder to learn —
-      and we already have some “Portrait / Landscape” labels that mean
-      <em>device frame sizes</em>, not screen orientation. Keeping them separate avoids confusion.
+      <strong>Plain version of the idea</strong>
+      Today we mainly ask “how wide is the screen?” We should keep that.
+      Landscape / Portrait is a second question — “is it tall or wide?” —
+      that we only ask when a design needs it. We add that second question
+      onto our existing helper, instead of inventing a whole new set of width names.
     </div>
 
-    <h2>How naming stays clear</h2>
-    <table>
-      <thead>
-        <tr><th>Keep using</th><th>Add (optional)</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Today’s width breakpoint names (no change)</td>
-          <td>Portrait / Landscape as an extra choice when needed</td>
-        </tr>
-        <tr>
-          <td>Existing “Ipad Portrait / Landscape” frame sizes</td>
-          <td>Leave them alone — they are mock device sizes, not orientation rules</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h2>What stays compatible</h2>
-    <ul>
-      <li>Old breakpoint names keep working exactly as they do now.</li>
-      <li>Teams do <strong>not</strong> have to edit existing screens.</li>
-      <li>New Portrait / Landscape behavior is <strong>opt-in</strong> — only where a design specifies it.</li>
-      <li>If we ever reorganize internals, we can keep the old public names as aliases.</li>
-    </ul>
-
-    <h2>How design &amp; product can use it</h2>
-    <div class="example">
-      <div class="label">Examples you can write in a spec</div>
-      <ul style="margin-bottom:0">
-        <li><strong>Tablet + Landscape:</strong> show two columns</li>
-        <li><strong>Tablet + Portrait:</strong> stack to one column</li>
-        <li><strong>Desktop width only:</strong> keep today’s rule (no orientation needed)</li>
-      </ul>
-    </div>
+    <h2>1. How our system is wired today</h2>
     <p class="muted">
-      Engineering applies those rules by combining “wide enough” with
-      “Portrait or Landscape” — same idea the browser already supports (~97.6% of users).
+      Think of it as a chain: raw sizes → named breakpoints → grid settings →
+      the <code>respond</code> helper that components actually call.
     </p>
-
-    <h2>Impact on other projects</h2>
-    <p>
-      <strong>Low.</strong> This is an additive change. Projects that ignore orientation
-      keep behaving as today. Projects that need it can adopt screen by screen.
-    </p>
-
-    <h2>Pros and cons (plain language)</h2>
     <table>
       <thead>
-        <tr><th></th><th>Recommended approach</th><th>Renaming everything</th></tr>
+        <tr><th>Step</th><th>Where in code</th><th>In human terms</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>Easy for teams already live?</td>
-          <td>Yes</td>
-          <td>No — big rewrite</td>
+          <td>Width names</td>
+          <td><code>_primitive-size.scss</code></td>
+          <td>
+            The shared width labels:
+            <code>$cml-ref-size-breakpoint-0/768/1024/1680</code>
+          </td>
         </tr>
         <tr>
-          <td>Clear for designers?</td>
-          <td>Yes — width + shape as two ideas</td>
-          <td>Harder — long mixed names</td>
+          <td>Product breakpoints</td>
+          <td><code>_semantic-breakpoint.scss</code></td>
+          <td>
+            Friendlier names for standard / landing / admin
+            (still just widths underneath)
+          </td>
         </tr>
         <tr>
-          <td>Can grow later?</td>
-          <td>Yes — add more widths or shapes later</td>
-          <td>Painful — more renames</td>
+          <td>Grid settings</td>
+          <td><code>_semantic-grid.scss</code></td>
+          <td>Each grid picks one of those widths as its starting point</td>
         </tr>
         <tr>
-          <td>Risk of name confusion</td>
-          <td>Low if we keep axes separate</td>
-          <td>High</td>
+          <td>What components call</td>
+          <td><code>_media.scss</code> → <code>respond</code></td>
+          <td>
+            “When we’re at tablet/desktop/…, apply these styles” —
+            currently width-only
+          </td>
         </tr>
-      </tbody>
-    </table>
-
-    <div class="callout ok">
-      <strong>Final recommendation</strong>
-      Keep today’s width breakpoints. Add Landscape / Portrait as an optional
-      second check. No forced migration. Use it when a layout truly needs
-      different behavior for tall vs wide screens.
-    </div>
-
-    <h2>What’s done vs next</h2>
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Status</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Understand limits of current setup</td><td>Done</td></tr>
-        <tr><td>Find a way to add Portrait/Landscape safely</td><td>Done</td></tr>
-        <tr><td>Agree naming that won’t clash</td><td>Done</td></tr>
-        <tr><td>Keep old names working</td><td>Done (by design)</td></tr>
-        <tr><td>Pros / cons + recommendation</td><td>Done</td></tr>
-        <tr><td>Usage examples for design &amp; product</td><td>Done</td></tr>
-        <tr><td>Build a small working trial in the codebase</td><td>Next</td></tr>
-        <tr><td>Verify width + orientation together in a real screen</td><td>Next</td></tr>
+        <tr>
+          <td>JS helper</td>
+          <td><code>utils/breakpoint.ts</code></td>
+          <td>Same idea in JavaScript: watch width, not orientation yet</td>
+        </tr>
       </tbody>
     </table>
 
     <div class="callout warn">
-      <strong>Next step</strong>
-      Engineering tries this on one sample screen to prove:
-      old width-only rules still work, and new Portrait/Landscape rules apply only where we ask.
+      <strong>Watch out — naming trap already in the repo</strong>
+      We already have names like <code>Ipad-Portrait</code> / <code>Ipad-Landscape</code>.
+      Those are <em>device frame sizes</em> for mocks, not the browser’s
+      “is the screen tall or wide?” check. If we also put Portrait/Landscape
+      into breakpoint width names, people will mix them up. Keep those ideas separate.
     </div>
 
-    <hr />
+    <h2>2. What’s missing today</h2>
+    <ul class="check">
+      <li>Breakpoints answer <strong>width</strong> only.</li>
+      <li>Orientation (tall vs wide) is a different kind of fact — not another pixel number.</li>
+      <li>Lots of screens already call <code>respond(...)</code> — renaming tokens would create a big cleanup job.</li>
+      <li>The JS helpers are also width-only today.</li>
+    </ul>
 
+    <h2>3. Options we can actually choose</h2>
+
+    <h3>
+      <span class="pill rec">Recommended</span>
+      A. Keep width tokens · teach <code>respond</code> an optional orientation
+    </h3>
+    <p>
+      Leave every existing width name alone. Let the helper accept an optional
+      second input: Portrait or Landscape. If you skip it, behavior stays exactly
+      as today.
+    </p>
+<pre>// _media.scss — additive, non-breaking
+@mixin respond($device, $orientation: null) {
+  $bp: map.get($breakpoints, $device);
+
+  @if $bp == null and $orientation == null {
+    @content;
+  } @else if $bp == null {
+    @media (orientation: #{$orientation}) { @content; }
+  } @else if $orientation == null {
+    @media (min-width: $bp) { @content; }
+  } @else {
+    @media (min-width: $bp) and (orientation: #{$orientation}) {
+      @content;
+    }
+  }
+}</pre>
+    <table>
+      <thead><tr><th>Why this is nice</th><th>Tradeoff</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>No rename, small change, opt-in, matches how CSS really works</td>
+          <td>Orientation lives on the helper, not as a new “width token”</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>
+      <span class="pill">Optional add-on</span>
+      B. Small orientation labels (not new widths)
+    </h3>
+    <p>
+      If we want shared names people can point to in docs/specs:
+    </p>
+<pre>// new file, optional
+$cml-sys-orientation-portrait: portrait;
+$cml-sys-orientation-landscape: landscape;</pre>
     <p class="muted">
-      Want the browser / pointer / OS discussion?
-      See the <a href="./">designer overview</a>.
+      Then: <code>@include respond(tablet, $cml-sys-orientation-landscape)</code>.
+      Still no change to <code>$cml-ref-size-breakpoint-*</code>.
     </p>
 
+    <h3>
+      <span class="pill avoid">Avoid</span>
+      C. Duplicate width tokens for every orientation
+    </h3>
+<pre>// ❌ Don’t make this the main API
+$cml-ref-size-breakpoint-768-landscape: ...;
+$cml-ref-size-breakpoint-768-portrait: ...;</pre>
+    <p class="muted">
+      Easy to confuse with device-frame tokens, painful to migrate, and orientation
+      isn’t a width value anyway.
+    </p>
+
+    <h2>4. Naming that stays consistent with CML</h2>
+    <table>
+      <thead><tr><th>Kind</th><th>Pattern</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Width (keep)</td>
+          <td><code>$cml-ref-size-breakpoint-&#123;px&#125;</code></td>
+          <td><code>$cml-ref-size-breakpoint-768</code></td>
+        </tr>
+        <tr>
+          <td>Semantic width (keep)</td>
+          <td><code>$cml-sys-breakpoint-&#123;context&#125;-&#123;step&#125;</code></td>
+          <td><code>$cml-sys-breakpoint-standard-md</code></td>
+        </tr>
+        <tr>
+          <td>Orientation labels (new, optional)</td>
+          <td><code>$cml-sys-orientation-&#123;portrait|landscape&#125;</code></td>
+          <td><code>$cml-sys-orientation-landscape</code></td>
+        </tr>
+        <tr>
+          <td>How you call it</td>
+          <td><code>respond($device, $orientation?)</code></td>
+          <td><code>respond(desktop, landscape)</code></td>
+        </tr>
+        <tr>
+          <td>Device frames (already exist — leave alone)</td>
+          <td><code>$cml-ref-size-device-*-Ipad-Portrait</code></td>
+          <td>Mock frame sizes, not media orientation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. Recommended structure</h2>
+    <pre>base size
+  └─ ref size breakpoint (width only)     ← keep public names
+       └─ sys breakpoint / grid maps      ← keep
+            └─ respond($device, $orientation?)   ← add the new question here
+                 └─ CSS: (min-width) + optional (orientation)</pre>
+    <p>
+      <strong>Default:</strong> don’t pass orientation → same as today.<br />
+      <strong>When design needs it:</strong> pass <code>portrait</code> or <code>landscape</code>.
+    </p>
+
+    <h2>6. Backward compatibility</h2>
+    <table>
+      <thead><tr><th>What people use today</th><th>Do we break it?</th><th>How we protect it</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>$cml-ref-size-breakpoint-*</code></td>
+          <td>No</td>
+          <td>Leave names as-is</td>
+        </tr>
+        <tr>
+          <td><code>$cml-sys-breakpoint-*</code></td>
+          <td>No</td>
+          <td>Leave names as-is</td>
+        </tr>
+        <tr>
+          <td><code>@include respond(tablet)</code></td>
+          <td>No</td>
+          <td>Second argument defaults to “not set”</td>
+        </tr>
+        <tr>
+          <td>New orientation styles</td>
+          <td>Opt-in only</td>
+          <td><code>@include respond(tablet, landscape) { ... }</code></td>
+        </tr>
+        <tr>
+          <td><code>breakpoint.ts</code></td>
+          <td>Additive later</td>
+          <td>Optional helper that also checks orientation</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout ok">
+      <strong>Impact on consumer projects</strong>
+      Low. Existing code keeps working. Teams only touch screens where design
+      explicitly asks for Portrait / Landscape behavior.
+    </div>
+
+    <h2>7. What a POC would touch</h2>
+    <table>
+      <thead><tr><th>File</th><th>What we’d try</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>src/scss/functions/_media.scss</code></td>
+          <td>Add optional orientation to <code>respond</code></td>
+        </tr>
+        <tr>
+          <td><code>_semantic-orientation.scss</code> (new, optional)</td>
+          <td>Shared portrait / landscape labels</td>
+        </tr>
+        <tr>
+          <td>One sample component</td>
+          <td>Prove old width-only calls still work, and new combo works</td>
+        </tr>
+        <tr>
+          <td><code>utils/breakpoint.ts</code> (optional follow-up)</td>
+          <td>Same idea in JS when a component needs it</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>8. Examples for developers</h2>
+<pre>// Today — still valid
+@include respond(tablet) {
+  .card { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+// Orientation only
+@include respond(mobile, portrait) {
+  .hero { flex-direction: column; }
+}
+
+// Width + orientation together
+@include respond(tablet, landscape) {
+  .nav { display: flex; flex-direction: row; }
+}</pre>
+
+<pre>// What the browser sees
+@media (min-width: 768px) and (orientation: landscape) { ... }</pre>
+
+    <h2>9. Do width and orientation work together?</h2>
+    <p>
+      Yes. The browser can require both: “wide enough <strong>and</strong> landscape.”
+      Width tokens still feed the width part; orientation is the extra condition.
+    </p>
+
+    <h2>10. Pros / cons / recommendation</h2>
+    <table>
+      <thead><tr><th>Option</th><th>Compat</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>A. Extend <code>respond</code> (+ optional orientation labels)</td>
+          <td>Full</td>
+          <td><strong>Do this</strong></td>
+        </tr>
+        <tr>
+          <td>B. Parallel width tokens per orientation</td>
+          <td>Heavy aliases</td>
+          <td>Not as the main API</td>
+        </tr>
+        <tr>
+          <td>C. Rename tokens to include orientation</td>
+          <td>Breaking</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout info">
+      <strong>Recommendation</strong>
+      Keep <code>$cml-ref-size-breakpoint-*</code> as the public width names.
+      Add orientation as an optional second question on <code>respond</code>.
+      Optionally add <code>$cml-sys-orientation-*</code> labels for clarity.
+      Mirror in JS helpers later if components need it.
+    </div>
+
     <footer>
-      CML responsive orientation — solution summary for non-technical readers
+      Based on chameleon-design · companion to designer Landscape/Portrait summary
     </footer>
   </main>
 </body>
