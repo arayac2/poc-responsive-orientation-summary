@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POC Solution — Device type × Breakpoints (for eng)</title>
+  <style>
+    :root {
+      --bg: #f4f4f5;
+      --surface: #fff;
+      --text: #18181b;
+      --muted: #52525b;
+      --line: #e4e4e7;
+      --accent: #1d4ed8;
+      --ok: #15803d;
+      --warn: #c2410c;
+      --bad: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+    h1 { font-size: 1.7rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    h2 { font-size: 1.2rem; margin: 28px 0 10px; }
+    h3 { font-size: 1.02rem; margin: 18px 0 8px; }
+    p { margin: 0 0 12px; }
+    .muted { color: var(--muted); }
+    .lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 20px; }
+    a { color: var(--accent); }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px; margin: 14px 0;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .stat strong { display: block; font-size: 1.1rem; margin-bottom: 2px; }
+    .stat span { font-size: 0.85rem; color: var(--muted); }
+    .stat.ok strong { color: var(--ok); }
+    .stat.warn strong { color: var(--warn); }
+    table {
+      width: 100%; border-collapse: collapse; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+      font-size: 0.92rem; margin: 12px 0;
+    }
+    th, td {
+      text-align: left; padding: 10px 12px;
+      border-bottom: 1px solid var(--line); vertical-align: top;
+    }
+    th { background: #fafafa; color: var(--muted); font-size: 0.82rem; }
+    tr:last-child td { border-bottom: none; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.84rem;
+    }
+    code {
+      background: #f4f4f5;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #18181b;
+      color: #f4f4f5;
+      padding: 14px 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.45;
+    }
+    .callout {
+      border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+      border: 1px solid; background: #fff;
+    }
+    .callout.ok { border-color: #86efac; background: #f0fdf4; }
+    .callout.warn { border-color: #fdba74; background: #fff7ed; }
+    .callout.info { border-color: #93c5fd; background: #eff6ff; }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .pill {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line);
+      margin-right: 6px; background: #fff; color: var(--muted);
+    }
+    .pill.rec { border-color: #86efac; color: var(--ok); background: #f0fdf4; }
+    .pill.avoid { border-color: #fca5a5; color: var(--bad); background: #fef2f2; }
+    ul.check { padding-left: 1.2rem; margin: 8px 0 0; }
+    ul.check li { margin: 4px 0; }
+    .live {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88rem;
+    }
+    .live dt { color: var(--muted); font-size: 0.78rem; margin-top: 8px; }
+    .live dt:first-child { margin-top: 0; }
+    .live dd { margin: 2px 0 0; font-weight: 600; color: var(--ok); }
+    footer { margin-top: 36px; font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="muted" style="margin:0 0 16px;font-size:0.9rem">
+      <a href="./">Designer summary (orientation)</a>
+      <span> · </span>
+      <a href="./solution.html">Eng: breakpoint × orientation</a>
+      <span> · </span>
+      <span>Eng: device × breakpoint (this page)</span>
+    </p>
+
+    <h1>Real solution — Device type × Breakpoints in CML</h1>
+    <p class="lead">
+      Plain-English for eng: keep the same width breakpoints we already ship.
+      Add one extra question — “is this a tablet or a desktop?” — so a wide tablet
+      does not accidentally get Desktop UI.
+    </p>
+
+    <div class="stats">
+      <div class="stat ok"><strong>Same BPs</strong><span>0 / 768 / 1024 / 1680</span></div>
+      <div class="stat ok"><strong>Approach C</strong><span>Host tag first → pointer fallback</span></div>
+      <div class="stat warn"><strong>Not Navigator UA</strong><span>Don’t sniff userAgent for layout</span></div>
+    </div>
+
+    <h2>1. Problem in human words</h2>
+    <p>
+      Today CML mostly asks: <em>“How many pixels wide is the window?”</em>
+      That works… until a tablet turns sideways.
+    </p>
+    <p>
+      Example: iPad landscape is often <strong>1024px wide</strong>. Our Desktop
+      breakpoint is also <strong>1024</strong>. So width alone says “Desktop,”
+      but product/design still want <strong>Tablet</strong> layout.
+    </p>
+    <p>
+      The opposite gray zone: a desktop that is portrait / narrower can feel
+      “tablet-sized,” but if we know it’s a desktop, we still want Desktop UI
+      once width hits 1024.
+    </p>
+    <div class="callout warn">
+      <strong>In one sentence</strong>
+      Width tells us the band. Device type breaks the tie when tablet and desktop
+      share the same width.
+    </div>
+
+    <h2>2. What we decided (Approach C)</h2>
+    <p>
+      <span class="pill rec">Recommended</span>
+      Resolve device class in this order — then combine with existing breakpoints.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Step</th><th>What eng does</th><th>Human meaning</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Read <code>data-cml-device</code> on <code>&lt;html&gt;</code> (<code>tablet</code> / <code>desktop</code> / <code>mobile</code>)</td>
+          <td>Trust the host app if it already knows the platform</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>If missing → <code>matchMedia('(hover: none) and (pointer: coarse)')</code> vs fine+hover</td>
+          <td>Guess touch-first vs mouse-first from the browser</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>If still unclear → width only</td>
+          <td>Same behavior as today</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout info">
+      <strong>Why not Navigator / userAgent?</strong>
+      UA strings lie (iPad can look like Mac), change for privacy, and don’t match
+      our CSS. Pointer + host tag stay aligned with what stylesheets can express.
+    </div>
+
+    <h2>3. Design rules eng must implement</h2>
+    <table>
+      <thead>
+        <tr><th>If…</th><th>Then use…</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Device = tablet, width ≥ 768 (even if ≥ 1024 landscape)</td><td><strong>Tablet</strong> design — do not promote to Desktop</td></tr>
+        <tr><td>Device = desktop, width ≥ 1024 (including portrait)</td><td><strong>Desktop</strong> design</td></tr>
+        <tr><td>Device = desktop, width ≥ 1680</td><td><strong>Desktop large</strong></td></tr>
+        <tr><td>No host tag + coarse pointer</td><td>Treat like tablet for the gray zone</td></tr>
+        <tr><td>No host tag + fine pointer</td><td>Treat like desktop for the gray zone</td></tr>
+      </tbody>
+    </table>
+    <div class="callout ok">
+      <strong>Product recommendation (open confirm)</strong>
+      On tablet devices, suppress Desktop <em>and</em> Desktop-large tiers — stay on Tablet UI
+      even at very large widths. Keeps the rule simple for design + eng.
+    </div>
+
+    <h2>4. Where it lands in CML code</h2>
+    <h3>TypeScript — extend <code>breakpoint.ts</code></h3>
+    <p class="muted">
+      Today: <code>isDesktopViewport()</code> / <code>watchDesktopBreakpoint()</code> = width ≥ 1024 only.
+      Target: same API shape for components, smarter resolve underneath.
+    </p>
+<pre>// Human flow:
+// 1) app set data-cml-device? use it
+// 2) else matchMedia pointer/hover
+// 3) else width
+
+export function resolveDeviceClass(): 'mobile' | 'tablet' | 'desktop' { /* … */ }
+
+export function isDesktopDesign(): boolean {
+  // tablet device → false even at ≥1024
+  // desktop device → true when width ≥ 1024
+}
+
+export function watchDesignBreakpoint(onChange: (isDesktop: boolean) => void) {
+  // listen: width MQ + pointer MQ + MutationObserver on data-cml-device
+}</pre>
+
+    <h3>SCSS — extend <code>respond()</code> in <code>_media.scss</code></h3>
+    <p class="muted">
+      Keep the same call sites: <code>@include respond(tablet)</code> / <code>respond(desktop)</code>.
+      Change the media query so Desktop styles do not apply on tablet devices.
+    </p>
+<pre>// Concept (Stencil needs :host-context for shadow DOM):
+// respond(desktop) ≈
+//   min-width: 1024
+//   AND (html[data-cml-device=desktop] OR (no attr AND fine pointer))
+//
+// respond(tablet) ≈
+//   min-width: 768
+//   AND (html[data-cml-device=tablet] OR touch fallback OR fine in 768–1023)</pre>
+
+    <h3>Host app contract</h3>
+<pre>&lt;!-- Prefer setting this before first paint --&gt;
+&lt;html data-cml-device="tablet"&gt;
+&lt;!-- or --&gt;
+&lt;html data-cml-device="desktop"&gt;
+
+// optional helper
+setCmlDevice('tablet' | 'desktop' | null)</pre>
+    <div class="callout warn">
+      <strong>First paint / layout jump</strong>
+      If the tag is set <em>after</em> components mount, UI can flip once (looks like shrink/expand).
+      Set it in the document shell or very early boot. Init itself is sync — no async Navigator dance.
+    </div>
+
+    <h2>5. Perf &amp; compatibility (eng FAQ)</h2>
+    <table>
+      <thead>
+        <tr><th>Question</th><th>Answer</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>When does it run?</td>
+          <td>Sync on field init + once in <code>connectedCallback</code> (same timing as today)</td>
+        </tr>
+        <tr>
+          <td>Perf?</td>
+          <td>Negligible: a few <code>matchMedia</code> + one attribute observer. No reflow if we don’t measure layout</td>
+        </tr>
+        <tr>
+          <td>Pointer/hover support?</td>
+          <td>~97.4% (<a href="https://caniuse.com/css-media-interaction" target="_blank" rel="noopener">caniuse</a>). Unsupported → width-only fallback</td>
+        </tr>
+        <tr>
+          <td>Host attribute?</td>
+          <td>100% — it’s just DOM</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>6. Live resolve on this browser</h2>
+    <p class="muted">Handy when debugging the 1024 gray zone. Resize or set the attribute in DevTools.</p>
+    <dl class="live" id="live">
+      <dt>Viewport width</dt>
+      <dd id="w">—</dd>
+      <dt>Host <code>data-cml-device</code></dt>
+      <dd id="h">—</dd>
+      <dt>Pointer / hover fallback</dt>
+      <dd id="p">—</dd>
+      <dt>Resolved design tier</dt>
+      <dd id="r">—</dd>
+    </dl>
+<pre>document.documentElement.setAttribute('data-cml-device', 'tablet')
+document.documentElement.setAttribute('data-cml-device', 'desktop')
+document.documentElement.removeAttribute('data-cml-device')</pre>
+
+    <h2>7. Checklist before coding in chameleon-design</h2>
+    <ul class="check">
+      <li>Do not change breakpoint pixel values</li>
+      <li>Extend <code>breakpoint.ts</code> + <code>_media.scss</code> first (single source)</li>
+      <li>Keep component call sites (<code>watchDesktopBreakpoint</code> / <code>respond(…)</code>) stable if possible</li>
+      <li>Document host contract: set <code>data-cml-device</code> early</li>
+      <li>Smoke-test iPad landscape, desktop portrait, Storybook without host tag</li>
+      <li>Confirm with design: tablet suppresses desktop-large or not</li>
+    </ul>
+
+    <div class="callout ok">
+      <strong>Bottom line for eng</strong>
+      Same breakpoints. Add device class (host tag → pointer/hover → width).
+      Tablet landscape stays Tablet. Desktop portrait stays Desktop at ≥1024.
+      No UA sniffing.
+    </div>
+
+    <footer>
+      Companion to
+      <a href="./solution.html">breakpoint × orientation</a>
+      and the
+      <a href="./">designer orientation summary</a>.
+      Target stack: chameleon-design (<code>breakpoint.ts</code>, <code>_media.scss</code>).
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var DESKTOP = 1024;
+      var TABLET = 768;
+      var LARGE = 1680;
+
+      function hostDevice() {
+        var raw = document.documentElement.getAttribute('data-cml-device');
+        return raw === 'mobile' || raw === 'tablet' || raw === 'desktop' ? raw : null;
+      }
+
+      function pointerGuess() {
+        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return 'tablet';
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return 'desktop';
+        return null;
+      }
+
+      function resolve() {
+        var w = window.innerWidth;
+        var device = hostDevice() || pointerGuess() || (w >= DESKTOP ? 'desktop' : w >= TABLET ? 'tablet' : 'mobile');
+        if (device === 'tablet') {
+          return w >= TABLET
+            ? (w >= DESKTOP ? 'Tablet (wide — blocked from Desktop)' : 'Tablet')
+            : 'Mobile';
+        }
+        if (device === 'desktop') {
+          if (w >= LARGE) return 'Desktop large';
+          if (w >= DESKTOP) return 'Desktop';
+          if (w >= TABLET) return 'Tablet band (desktop device, &lt;1024)';
+          return 'Mobile';
+        }
+        return w >= TABLET ? 'Tablet' : 'Mobile';
+      }
+
+      function paint() {
+        var w = window.innerWidth;
+        document.getElementById('w').textContent = w + 'px';
+        var host = hostDevice();
+        document.getElementById('h').textContent = host || '(none)';
+        var touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        document.getElementById('p').textContent = touch
+          ? 'coarse → tablet-like'
+          : fine
+            ? 'fine → desktop-like'
+            : 'unclear → width';
+        document.getElementById('r').innerHTML = resolve();
+      }
+
+      paint();
+      window.addEventListener('resize', paint);
+      window.matchMedia('(hover: none) and (pointer: coarse)').addEventListener('change', paint);
+      window.matchMedia('(hover: hover) and (pointer: fine)').addEventListener('change', paint);
+      new MutationObserver(paint).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-cml-device'],
+      });
+    })();
+  </script>
+</body>
+</html>
